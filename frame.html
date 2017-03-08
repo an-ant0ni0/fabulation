@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,7 +34,11 @@
         var meta = {{ meta }};
 
         $(function() {
-            start_fabulation(meta)(meta["{{ root }}"])
+            var hash = window.location.hash.substr(1);
+            if (hash == '') {
+                hash = "{{ root }}";
+            }
+            start_fabulation(meta)(meta[hash])
         })
     </script>
   </body>

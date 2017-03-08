@@ -7,6 +7,7 @@ import mistune
 from jinja2 import Template
 
 import argparse
+import codecs
 
 class WrongLink(Exception):
     pass
@@ -125,8 +126,9 @@ class Video(object):
         return dict(), meta
 
 class Node(object):
-    def __init__( self, ident, data, Features ):
-        self._ident = "n%d" % ident
+    def __init__( self, ident, name, data, Features ):
+        #self._ident = "n%d" % ident
+        self._ident = name
 
         if not isinstance(data, dict):
             data = { "content" : data }
@@ -158,10 +160,10 @@ def main():
     syu_in_file = args.input
     html_out_file = args.output
 
-    with open(syu_in_file, "r") as i:
+    with codecs.open(syu_in_file, "r", "utf-8") as i:
         yaml_dict = yaml.load( i.read() )
 
-    nodes = { name : Node( i, data, [ Text, Pic, Audio ] ) for i,(name,data) in enumerate(yaml_dict.items()) }
+    nodes = { name : Node( i, name, data, [ Text, Pic, Audio ] ) for i,(name,data) in enumerate(yaml_dict.items()) }
 
     info = { node._ident : node.render( name, nodes ) for name, node in nodes.items() }
     view = [ v for i,(v,m) in info.items() ]
@@ -171,11 +173,12 @@ def main():
 
     js_meta = json.dumps(meta)
 
-    with open(frame_file, "r") as i:
+    with codecs.open(frame_file, "r", "utf-8") as i:
         template = Template(i.read())
 
-    with open(html_out_file, "w") as o:
+    with codecs.open(html_out_file, "w", "utf-8") as o:
         o.write(template.render(contexts=view,meta=js_meta,root=root))
+    print("done.")
 
 if __name__ == "__main__":
     main()
